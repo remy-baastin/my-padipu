@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padippu</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
+    </script>
+    <style>
+        :root {
+            --bg: #fcfaf6;
+            --card-bg: #ffffff;
+            --text: #2c2824;
+            --text-secondary: #6b6560;
+            --text-muted: #9a948c;
+            --accent: #4a5578;
+            --accent-hover: #3b4563;
+            --amber: #c4853e;
+            --amber-bg: #fdf3e4;
+            --amber-border: #f0d9b8;
+            --sage: #6d8b6d;
+            --sage-bg: #eef5ee;
+            --sage-border: #c8dcc8;
+            --slate: #7d8a97;
+            --slate-bg: #f0f3f5;
+            --slate-border: #d5dce3;
+            --border: #e8e3db;
+            --border-light: #f0ece6;
+            --shadow-sm: 0 1px 3px rgba(44, 40, 36, 0.05);
+            --shadow-md: 0 4px 16px rgba(44, 40, 36, 0.07);
+            --shadow-lg: 0 8px 32px rgba(44, 40, 36, 0.10);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-serif: 'Georgia', 'Times New Roman', 'Noto Serif', serif;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image:
+                radial-gradient(ellipse at 20% 10%, rgba(180, 160, 140, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 75% 60%, rgba(140, 155, 170, 0.05) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 90%, rgba(160, 150, 130, 0.04) 0%, transparent 50%);
+        }
+
+        /* ── Header ─────────────────────── */
+        .header {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 40px 24px 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #e8e0d5 0%, #d5cdc0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+        .header-title {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            font-weight: 400;
+            color: var(--text);
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+        .header-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.2px;
+        }
+        .edit-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: transparent;
+            border: 1.5px solid var(--border);
+            color: var(--text-secondary);
+            padding: 9px 16px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            transition: all var(--transition);
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .edit-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: var(--shadow-sm);
+        }
+        .edit-btn svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+        .edit-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ── Main Content ──────────────── */
+        .main-container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 28px 24px 60px;
+        }
+
+        /* ── Section Labels ────────────── */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 32px 0 16px;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+        }
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-light);
+            border-radius: 1px;
+        }
+        .section-label:first-of-type {
+            margin-top: 8px;
+        }
+        .section-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .section-dot.current {
+            background: var(--amber);
+            box-shadow: 0 0 0 4px rgba(196, 133, 62, 0.15);
+        }
+        .section-dot.queued {
+            background: var(--slate);
+            box-shadow: 0 0 0 4px rgba(125, 138, 151, 0.12);
+        }
+        .section-dot.done {
+            background: var(--sage);
+            box-shadow: 0 0 0 4px rgba(109, 139, 109, 0.12);
+        }
+
+        /* ── Paper Card ────────────────── */
+        .paper-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 22px 26px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .paper-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--border);
+            transform: translateY(-1px);
+        }
+        .paper-card.current-card {
+            border-left: 3px solid var(--amber);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, #ffffff 0%, #fefcf7 100%);
+        }
+        .paper-card.queued-card {
+            border-left: 3px solid var(--slate);
+        }
+        .paper-card.done-card {
+            border-left: 3px solid var(--sage);
+            opacity: 0.85;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            font-weight: 400;
+            color: var(--text);
+            line-height: 1.4;
+            flex: 1;
+            min-width: 200px;
+            letter-spacing: -0.2px;
+        }
+        .card-title a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1.5px solid transparent;
+            transition: all var(--transition);
+        }
+        .card-title a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: var(--font-sans);
+        }
+        .status-badge.current {
+            background: var(--amber-bg);
+            color: #9a5e1f;
+            border: 1px solid var(--amber-border);
+        }
+        .status-badge.queued {
+            background: var(--slate-bg);
+            color: #4a5568;
+            border: 1px solid var(--slate-border);
+        }
+        .status-badge.done {
+            background: var(--sage-bg);
+            color: #3d5a3d;
+            border: 1px solid var(--sage-border);
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        .status-dot.current {
+            background: #c4853e;
+        }
+        .status-dot.queued {
+            background: #7d8a97;
+        }
+        .status-dot.done {
+            background: #6d8b6d;
+        }
+
+        .card-links {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            letter-spacing: 0.1px;
+            transition: all var(--transition);
+            padding: 4px 0;
+        }
+        .card-link:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .card-link svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            opacity: 0.8;
+        }
+        .card-link.colab svg {
+            color: #f9ab00;
+        }
+
+        .card-notes {
+            margin-top: 12px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .card-notes h1,
+        .card-notes h2,
+        .card-notes h3,
+        .card-notes h4 {
+            color: var(--text);
+            font-family: var(--font-serif);
+            font-weight: 400;
+            margin: 1em 0 0.4em;
+            letter-spacing: -0.2px;
+        }
+        .card-notes h1 {
+            font-size: 1.3rem;
+        }
+        .card-notes h2 {
+            font-size: 1.1rem;
+        }
+        .card-notes h3 {
+            font-size: 1rem;
+        }
+        .card-notes p {
+            margin: 0.5em 0;
+        }
+        .card-notes ul,
+        .card-notes ol {
+            padding-left: 1.4em;
+            margin: 0.5em 0;
+        }
+        .card-notes li {
+            margin: 0.25em 0;
+        }
+        .card-notes code {
+            background: #f5f2ed;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+        }
+        .card-notes pre {
+            background: #f5f2ed;
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        .card-notes blockquote {
+            border-left: 3px solid var(--amber);
+            margin: 0.8em 0;
+            padding: 6px 16px;
+            color: var(--text-muted);
+            font-style: italic;
+            background: #fdfbf7;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+        .card-notes a {
+            color: var(--accent);
+            text-underline-offset: 3px;
+        }
+        .card-notes img {
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+        }
+
+        /* ── Empty State ───────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .empty-state .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+        .empty-state p {
+            margin: 4px 0;
+        }
+
+        /* ── Edit Overlay / Modal ──────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 28, 24, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.25s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal h2 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-size: 1.35rem;
+            margin-bottom: 20px;
+            letter-spacing: -0.3px;
+        }
+        .modal label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            margin-top: 14px;
+        }
+        .modal label:first-of-type {
+            margin-top: 0;
+        }
+        .modal input,
+        .modal textarea,
+        .modal select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            transition: all var(--transition);
+            background: #fdfcf9;
+            color: var(--text);
+        }
+        .modal input:focus,
+        .modal textarea:focus,
+        .modal select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(74, 85, 120, 0.08);
+            background: #fff;
+        }
+        .modal textarea {
+            min-height: 140px;
+            resize: vertical;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .modal .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            letter-spacing: 0.2px;
+            transition: all var(--transition);
+            border: 1.5px solid transparent;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-secondary {
+            background: #fff;
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--text-muted);
+            color: var(--text);
+        }
+        .btn-danger {
+            background: #fff;
+            color: #c44;
+            border-color: #ecc;
+        }
+        .btn-danger:hover {
+            background: #fff5f5;
+            border-color: #c44;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            border-radius: 18px;
+        }
+
+        /* ── Edit Mode Card Controls ───── */
+        .card-edit-controls {
+            display: none;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .edit-mode .card-edit-controls {
+            display: flex;
+        }
+        .edit-mode .paper-card {
+            cursor: default;
+        }
+        .edit-mode .paper-card:hover {
+            transform: none;
+        }
+
+        /* ── Save Bar ──────────────────── */
+        .save-bar {
+            display: none;
+            position: sticky;
+            bottom: 20px;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 0 24px;
+            z-index: 50;
+        }
+        .edit-mode .save-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .save-bar-inner {
+            display: flex;
+            gap: 10px;
+            background: #fff;
+            padding: 12px 18px;
+            border-radius: 28px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .save-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-right: 4px;
+        }
+        .save-status.success {
+            color: var(--sage);
+        }
+        .save-status.error {
+            color: #c44;
+        }
+        .save-status.loading {
+            color: var(--amber);
+        }
+
+        /* ── Toast ─────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #2c2824;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 0.85rem;
+            z-index: 200;
+            pointer-events: none;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.success {
+            background: #3d5a3d;
+        }
+        .toast.error {
+            background: #8b2c2c;
+        }
+
+        /* ── Responsive ────────────────── */
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                gap: 14px;
+                padding: 24px 16px 0;
+            }
+            .header-title {
+                font-size: 1.4rem;
+            }
+            .main-container {
+                padding: 20px 14px 50px;
+            }
+            .paper-card {
+                padding: 16px 18px;
+            }
+            .card-title {
+                font-size: 1rem;
+            }
+            .modal {
+                padding: 22px 18px;
+                width: 95%;
+                border-radius: var(--radius);
+            }
+            .save-bar {
+                padding: 0 10px;
+                bottom: 12px;
+            }
+            .save-bar-inner {
+                padding: 10px 14px;
+                border-radius: 22px;
+            }
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════ HEADER ═══════════════ -->
+    <header class="header">
+        <div class="header-brand">
+            <div class="header-icon">📖</div>
+            <div>
+                <h1 class="header-title">My-படிப்பு</h1>
+                <p class="header-subtitle">Reading | Reflection | Implementation</p>
+            </div>
+        </div>
+        <button class="edit-btn" id="editToggleBtn" title="Edit journal" aria-label="Toggle edit mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Edit
+        </button>
+    </header>
+
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <main class="main-container" id="mainContainer">
+        <!-- Dynamically filled -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">📚</div>
+            <p>No papers yet.</p>
+            <p>Click <strong>Edit</strong> to add your first paper.</p>
+        </div>
+    </main>
+
+    <!-- ═══════════════ SAVE BAR (edit mode) ═══════════════ -->
+    <div class="save-bar" id="saveBar">
+        <div class="save-bar-inner">
+            <span class="save-status" id="saveStatus"></span>
+            <button class="btn btn-primary btn-sm" id="saveToGitHubBtn">Save to GitHub</button>
+            <button class="btn btn-sm" id="addPaperBtn" style="background:#fff;border:1.5px solid var(--border);color:var(--text-secondary);">+ Add Paper</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════ PASSWORD MODAL ═══════════════ -->
+    <div class="modal-overlay" id="passwordModalOverlay">
+        <div class="modal">
+            <h2>Enter Edit Password</h2>
+            <label for="passwordInput">Password</label>
+            <input type="password" id="passwordInput" placeholder="Enter password…" autocomplete="off">
+            <div class="btn-row">
+                <button class="btn btn-primary" id="passwordSubmitBtn">Unlock Edit Mode</button>
+                <button class="btn btn-secondary" id="passwordCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ TOKEN MODAL ═══════════════ -->
+    <div class="modal-overlay" id="tokenModalOverlay">
+        <div class="modal">
+            <h2>GitHub Token Required</h2>
+            <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
+                To save changes, provide a GitHub personal access token with <strong>repo</strong> scope.
+                <a href="https://github.com/settings/tokens" target="_blank" rel="noopener" style="color:var(--accent);">Create one here →</a>
+            </p>
+            <label for="tokenInput">Personal Access Token</label>
+            <input type="password" id="tokenInput" placeholder="ghp_…" autocomplete="off">
+            <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Stored only in your browser's localStorage.</p>
+            <div class="btn-row">
+                <button class="btn btn-primary" id="tokenSubmitBtn">Save Token</button>
+                <button class="btn btn-secondary" id="tokenSkipBtn">Skip (view only)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ PAPER EDIT MODAL ═══════════════ -->
+    <div class="modal-overlay" id="paperEditModalOverlay">
+        <div class="modal" style="max-width:560px;">
+            <h2 id="paperEditModalTitle">Edit Paper</h2>
+            <input type="hidden" id="paperEditId">
+            <label for="paperEditTitle">Paper Title *</label>
+            <input type="text" id="paperEditTitle" placeholder="e.g., Attention Is All You Need">
+            <label for="paperEditPaperLink">Paper Link (URL)</label>
+            <input type="url" id="paperEditPaperLink" placeholder="https://arxiv.org/abs/…">
+            <label for="paperEditColabLink">Colab Link (URL)</label>
+            <input type="url" id="paperEditColabLink" placeholder="https://colab.research.google.com/…">
+            <label for="paperEditStatus">Status</label>
+            <select id="paperEditStatus">
+                <option value="current">📖 Current (In Progress)</option>
+                <option value="queued">📋 Queued (Up Next)</option>
+                <option value="done">✅ Done (Completed)</option>
+            </select>
+            <label for="paperEditNotes">Notes (Markdown)</label>
+            <textarea id="paperEditNotes" placeholder="Write your reflections in markdown…&#10;&#10;## Summary&#10;…&#10;&#10;## Key Insights&#10;- …&#10;&#10;## Reflections&#10;…"></textarea>
+            <div class="btn-row">
+                <button class="btn btn-primary" id="paperEditSaveBtn">Save Paper</button>
+                <button class="btn btn-secondary" id="paperEditCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ TOAST ═══════════════ -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // ─────────────────────────────────────
+            // ⚙️ CONFIGURATION — Edit these values
+            // ─────────────────────────────────────
+            const CONFIG = {
+                githubOwner: 'remy-baastin', // ← CHANGE THIS
+                githubRepo: 'my-padipu', // ← CHANGE THIS
+                dataFilePath: 'papers.json', // File in repo root
+                dataBranch: 'main', // or 'master'
+                // SHA-256 hash of your edit password.
+                // Generate: in browser console run:
+                //   crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
+                //     .then(h => console.log([...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')))
+                editPasswordHash: '71007ec23ebefa5769378c1583b0fd9aaa0deb9daf9a59c24cab02ce86e1c743', // ← CHANGE THIS (see instructions above)
+                // Or use plaintext comparison (less secure but simpler):
+                // Set editPasswordHash to null and editPasswordPlain to your password:
+                editPasswordPlain: null, // e.g., 'myjournal123' — only used if editPasswordHash is null
+            };
+
+            // ─────────────────────────────────────
+            // STATE
+            // ─────────────────────────────────────
+            let papers = [];
+            let editMode = false;
+            let githubToken = null;
+            let currentFileSha = null;
+
+            // ─────────────────────────────────────
+            // DOM REFS
+            // ─────────────────────────────────────
+            const mainContainer = document.getElementById('mainContainer');
+            const emptyState = document.getElementById('emptyState');
+            const editToggleBtn = document.getElementById('editToggleBtn');
+            const saveBar = document.getElementById('saveBar');
+            const saveStatus = document.getElementById('saveStatus');
+            const saveToGitHubBtn = document.getElementById('saveToGitHubBtn');
+            const addPaperBtn = document.getElementById('addPaperBtn');
+            const passwordModalOverlay = document.getElementById('passwordModalOverlay');
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordSubmitBtn = document.getElementById('passwordSubmitBtn');
+            const passwordCancelBtn = document.getElementById('passwordCancelBtn');
+            const tokenModalOverlay = document.getElementById('tokenModalOverlay');
+            const tokenInput = document.getElementById('tokenInput');
+            const tokenSubmitBtn = document.getElementById('tokenSubmitBtn');
+            const tokenSkipBtn = document.getElementById('tokenSkipBtn');
+            const paperEditModalOverlay = document.getElementById('paperEditModalOverlay');
+            const paperEditId = document.getElementById('paperEditId');
+            const paperEditTitle = document.getElementById('paperEditTitle');
+            const paperEditPaperLink = document.getElementById('paperEditPaperLink');
+            const paperEditColabLink = document.getElementById('paperEditColabLink');
+            const paperEditStatus = document.getElementById('paperEditStatus');
+            const paperEditNotes = document.getElementById('paperEditNotes');
+            const paperEditSaveBtn = document.getElementById('paperEditSaveBtn');
+            const paperEditCancelBtn = document.getElementById('paperEditCancelBtn');
+            const paperEditModalTitle = document.getElementById('paperEditModalTitle');
+            const toast = document.getElementById('toast');
+
+            // ─────────────────────────────────────
+            // TOAST
+            // ─────────────────────────────────────
+            let toastTimer;
+
+            function showToast(message, type = '') {
+                clearTimeout(toastTimer);
+                toast.textContent = message;
+                toast.className = 'toast ' + type + ' show';
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            }
+
+            // ─────────────────────────────────────
+            // PASSWORD / AUTH
+            // ─────────────────────────────────────
+            async function verifyPassword(input) {
+                if (CONFIG.editPasswordPlain !== null && CONFIG.editPasswordHash === null) {
+                    // Plaintext mode
+                    return input === CONFIG.editPasswordPlain;
+                }
+                // Hash mode
+                const msgBuffer = new TextEncoder().encode(input);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                return hashHex === CONFIG.editPasswordHash;
+            }
+
+            function isPasswordSessionValid() {
+                return sessionStorage.getItem('journal_edit_unlocked') === 'true';
+            }
+
+            function setPasswordSession() {
+                sessionStorage.setItem('journal_edit_unlocked', 'true');
+            }
+
+            function clearPasswordSession() {
+                sessionStorage.removeItem('journal_edit_unlocked');
+            }
+
+            // ─────────────────────────────────────
+            // TOKEN MANAGEMENT
+            // ─────────────────────────────────────
+            function getStoredToken() {
+                return localStorage.getItem('journal_github_token');
+            }
+
+            function setStoredToken(token) {
+                localStorage.setItem('journal_github_token', token);
+                githubToken = token;
+            }
+
+            function clearStoredToken() {
+                localStorage.removeItem('journal_github_token');
+                githubToken = null;
+            }
+
+            // ─────────────────────────────────────
+            // GITHUB API HELPERS
+            // ─────────────────────────────────────
+            function getRawUrl() {
+                return `https://raw.githubusercontent.com/${CONFIG.githubOwner}/${CONFIG.githubRepo}/${CONFIG.dataBranch}/${CONFIG.dataFilePath}`;
+            }
+
+            function getApiUrl() {
+                return `https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/contents/${CONFIG.dataFilePath}`;
+            }
+
+            async function fetchPapersPublic() {
+                const url = getRawUrl();
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        // File doesn't exist yet
+                        return [];
+                    }
+                    throw new Error(`Failed to fetch papers: ${response.status}`);
+                }
+                const data = await response.json();
+                return Array.isArray(data) ? data : [];
+            }
+
+            async function fetchPapersWithSha() {
+                if (!githubToken) throw new Error('No GitHub token available');
+                const url = getApiUrl();
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                    },
+                    cache: 'no-store',
+                });
+                if (response.status === 404) {
+                    // File doesn't exist — create it fresh
+                    currentFileSha = null;
+                    return [];
+                }
+                if (!response.ok) {
+                    if (response.status === 401) throw new Error('Invalid GitHub token');
+                    throw new Error(`GitHub API error: ${response.status}`);
+                }
+                const data = await response.json();
+                currentFileSha = data.sha;
+                // Content is base64 encoded
+                const content = data.content;
+                if (content && content !== '') {
+                    const decoded = atob(content.replace(/\n/g, ''));
+                    return JSON.parse(decoded);
+                }
+                return [];
+            }
+
+            function utf8ToBase64(str) {
+                const bytes = new TextEncoder().encode(str);
+                let binary = '';
+                bytes.forEach(b => binary += String.fromCharCode(b));
+                return btoa(binary);
+            }
+
+            async function commitPapersToGitHub(papersData) {
+                if (!githubToken) throw new Error('No GitHub token available');
+                const url = getApiUrl();
+                const contentBase64 = utf8ToBase64(JSON.stringify(papersData, null, 2));
+                const body = {
+                    message: 'Update research journal papers',
+                    content: contentBase64,
+                    branch: CONFIG.dataBranch,
+                };
+                if (currentFileSha) {
+                    body.sha = currentFileSha;
+                }
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                });
+                if (!response.ok) {
+                    if (response.status === 409) throw new Error('Conflict — file changed elsewhere. Refresh and try again.');
+                    if (response.status === 401) throw new Error('Invalid GitHub token');
+                    throw new Error(`GitHub API error: ${response.status}`);
+                }
+                const result = await response.json();
+                currentFileSha = result.content.sha;
+                return result;
+            }
+
+            // ─────────────────────────────────────
+            // RENDER
+            // ─────────────────────────────────────
+            function groupPapers() {
+                const current = papers.filter(p => p.status === 'current');
+                const queued = papers.filter(p => p.status === 'queued');
+                const done = papers.filter(p => p.status === 'done');
+                return { current, queued, done };
+            }
+
+            function renderPaperCard(paper, index) {
+                const statusClass = paper.status || 'queued';
+                const cardClass = statusClass === 'current' ? 'current-card' :
+                    statusClass === 'queued' ? 'queued-card' : 'done-card';
+                const statusLabel = statusClass === 'current' ? 'Current' :
+                    statusClass === 'queued' ? 'Queued' : 'Done';
+                const statusEmoji = statusClass === 'current' ? '📖' :
+                    statusClass === 'queued' ? '📋' : '✅';
+
+                const titleHtml = paper.paperLink ?
+                    `<a href="${escapeHtml(paper.paperLink)}" target="_blank" rel="noopener">${escapeHtml(paper.title || 'Untitled Paper')} ↗</a>` :
+                    escapeHtml(paper.title || 'Untitled Paper');
+
+                let linksHtml = '';
+                if (paper.paperLink) {
+                    linksHtml += `
+                <a href="${escapeHtml(paper.paperLink)}" target="_blank" rel="noopener" class="card-link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  Paper
+                </a>`;
+                }
+                if (paper.colabLink) {
+                    linksHtml += `
+                <a href="${escapeHtml(paper.colabLink)}" target="_blank" rel="noopener" class="card-link colab">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l5.59-5.59L18 10l-7 7z"/></svg>
+                  Colab
+                </a>`;
+                }
+
+                let notesHtml = '';
+                if (paper.notes && paper.notes.trim()) {
+                    const rendered = marked.parse(paper.notes.trim());
+                    notesHtml = `<div class="card-notes">${rendered}</div>`;
+                }
+
+                const editControlsHtml = editMode ? `
+              <div class="card-edit-controls">
+                <button class="btn btn-secondary btn-sm edit-paper-btn" data-index="${index}">✏️ Edit</button>
+                <button class="btn btn-danger btn-sm delete-paper-btn" data-index="${index}">🗑 Delete</button>
+              </div>` : '';
+
+                return `
+            <div class="paper-card ${cardClass}" data-paper-index="${index}">
+              <div class="card-header">
+                <span class="card-title">${titleHtml}</span>
+                <span class="status-badge ${statusClass}">
+                  <span class="status-dot ${statusClass}"></span> ${statusEmoji} ${statusLabel}
+                </span>
+              </div>
+              ${linksHtml ? `<div class="card-links">${linksHtml}</div>` : ''}
+              ${notesHtml}
+              ${editControlsHtml}
+            </div>`;
+            }
+
+            function renderAll() {
+                const { current, queued, done } = groupPapers();
+                const totalPapers = current.length + queued.length + done.length;
+
+                if (totalPapers === 0) {
+                    emptyState.style.display = 'block';
+                    mainContainer.innerHTML = '';
+                    mainContainer.appendChild(emptyState);
+                } else {
+                    emptyState.style.display = 'none';
+                    let html = '';
+
+                    if (current.length > 0) {
+                        html +=
+                            `<div class="section-label"><span class="section-dot current"></span> Currently Reading</div>`;
+                        html += current.map((p, i) => renderPaperCard(p, papers.indexOf(p))).join('');
+                    }
+                    if (queued.length > 0) {
+                        html += `<div class="section-label"><span class="section-dot queued"></span> Up Next</div>`;
+                        html += queued.map((p, i) => renderPaperCard(p, papers.indexOf(p))).join('');
+                    }
+                    if (done.length > 0) {
+                        html += `<div class="section-label"><span class="section-dot done"></span> Completed</div>`;
+                        html += done.map((p, i) => renderPaperCard(p, papers.indexOf(p))).join('');
+                    }
+
+                    // Keep emptyState in DOM but hidden
+                    mainContainer.innerHTML = html;
+                    if (!mainContainer.contains(emptyState)) {
+                        mainContainer.appendChild(emptyState);
+                        emptyState.style.display = 'none';
+                    }
+                }
+
+                // Update edit mode class on body
+                if (editMode) {
+                    document.body.classList.add('edit-mode');
+                    saveBar.style.display = 'flex';
+                    editToggleBtn.classList.add('active');
+                    editToggleBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Editing
+              `;
+                } else {
+                    document.body.classList.remove('edit-mode');
+                    saveBar.style.display = 'none';
+                    editToggleBtn.classList.remove('active');
+                    editToggleBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit
+              `;
+                }
+            }
+
+            // ─────────────────────────────────────
+            // ESCAPE HTML
+            // ─────────────────────────────────────
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // ─────────────────────────────────────
+            // DATA LOADING
+            // ─────────────────────────────────────
+            async function loadPapers() {
+                try {
+                    papers = await fetchPapersPublic();
+                    currentFileSha = null; // Will be set when saving
+                    renderAll();
+                } catch (err) {
+                    console.error('Error loading papers:', err);
+                    papers = [];
+                    renderAll();
+                    showToast('Could not load papers. Check your configuration.', 'error');
+                }
+            }
+
+            async function refreshPapersWithToken() {
+                if (!githubToken) return;
+                try {
+                    const freshPapers = await fetchPapersWithSha();
+                    papers = freshPapers;
+                    renderAll();
+                } catch (err) {
+                    console.error('Error refreshing papers with token:', err);
+                }
+            }
+
+            // ─────────────────────────────────────
+            // EDIT MODE TOGGLE
+            // ─────────────────────────────────────
+            async function enterEditMode() {
+                // Check if already authenticated in this session
+                if (isPasswordSessionValid()) {
+                    editMode = true;
+                    githubToken = getStoredToken();
+                    if (githubToken) {
+                        await refreshPapersWithToken();
+                    }
+                    renderAll();
+                    if (!githubToken) {
+                        showTokenModal();
+                    }
+                    return;
+                }
+                // Show password modal
+                showPasswordModal();
+            }
+
+            function exitEditMode() {
+                editMode = false;
+                clearPasswordSession();
+                renderAll();
+                showToast('Edit mode exited.');
+            }
+
+            function showPasswordModal() {
+                passwordInput.value = '';
+                passwordModalOverlay.classList.add('open');
+                setTimeout(() => passwordInput.focus(), 150);
+            }
+
+            function hidePasswordModal() {
+                passwordModalOverlay.classList.remove('open');
+            }
+
+            async function handlePasswordSubmit() {
+                const input = passwordInput.value;
+                const valid = await verifyPassword(input);
+                if (valid) {
+                    setPasswordSession();
+                    hidePasswordModal();
+                    editMode = true;
+                    githubToken = getStoredToken();
+                    if (githubToken) {
+                        await refreshPapersWithToken();
+                    }
+                    renderAll();
+                    if (!githubToken) {
+                        showTokenModal();
+                    }
+                    showToast('Edit mode unlocked ✨', 'success');
+                } else {
+                    showToast('Incorrect password.', 'error');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+
+            function showTokenModal() {
+                tokenInput.value = githubToken || '';
+                tokenModalOverlay.classList.add('open');
+                setTimeout(() => tokenInput.focus(), 150);
+            }
+
+            function hideTokenModal() {
+                tokenModalOverlay.classList.remove('open');
+            }
+
+            function handleTokenSubmit() {
+                const token = tokenInput.value.trim();
+                if (token) {
+                    setStoredToken(token);
+                    hideTokenModal();
+                    refreshPapersWithToken();
+                    showToast('Token saved. You can now save changes.', 'success');
+                } else {
+                    showToast('Please enter a valid token.', 'error');
+                }
+            }
+
+            function handleTokenSkip() {
+                hideTokenModal();
+                showToast('Edit mode active but saving disabled (no token).', 'error');
+            }
+
+            // ─────────────────────────────────────
+            // PAPER EDIT MODAL
+            // ─────────────────────────────────────
+            function showPaperEditModal(paper = null) {
+                if (paper) {
+                    paperEditModalTitle.textContent = 'Edit Paper';
+                    paperEditId.value = papers.indexOf(paper);
+                    paperEditTitle.value = paper.title || '';
+                    paperEditPaperLink.value = paper.paperLink || '';
+                    paperEditColabLink.value = paper.colabLink || '';
+                    paperEditStatus.value = paper.status || 'queued';
+                    paperEditNotes.value = paper.notes || '';
+                } else {
+                    paperEditModalTitle.textContent = 'Add New Paper';
+                    paperEditId.value = 'new';
+                    paperEditTitle.value = '';
+                    paperEditPaperLink.value = '';
+                    paperEditColabLink.value = '';
+                    paperEditStatus.value = 'queued';
+                    paperEditNotes.value = '';
+                }
+                paperEditModalOverlay.classList.add('open');
+                setTimeout(() => paperEditTitle.focus(), 150);
+            }
+
+            function hidePaperEditModal() {
+                paperEditModalOverlay.classList.remove('open');
+            }
+
+            function handlePaperEditSave() {
+                const title = paperEditTitle.value.trim();
+                if (!title) {
+                    showToast('Paper title is required.', 'error');
+                    return;
+                }
+                const paperData = {
+                    id: paperEditId.value !== 'new' && papers[parseInt(paperEditId.value)] ?
+                        papers[parseInt(paperEditId.value)].id : generateId(),
+                    title: title,
+                    paperLink: paperEditPaperLink.value.trim(),
+                    colabLink: paperEditColabLink.value.trim(),
+                    status: paperEditStatus.value,
+                    notes: paperEditNotes.value,
+                };
+
+                if (paperEditId.value === 'new') {
+                    papers.push(paperData);
+                } else {
+                    const idx = parseInt(paperEditId.value);
+                    if (idx >= 0 && idx < papers.length) {
+                        papers[idx] = paperData;
+                    }
+                }
+                hidePaperEditModal();
+                renderAll();
+                setSaveStatus('Unsaved changes…', 'loading');
+                showToast('Paper updated locally. Save to GitHub to persist.', '');
+            }
+
+            function generateId() {
+                return 'paper_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            }
+
+            function handleDeletePaper(index) {
+                if (confirm('Delete this paper? This cannot be undone.')) {
+                    papers.splice(index, 1);
+                    renderAll();
+                    setSaveStatus('Unsaved changes…', 'loading');
+                    showToast('Paper deleted locally. Save to GitHub to persist.', '');
+                }
+            }
+
+            // ─────────────────────────────────────
+            // SAVE TO GITHUB
+            // ─────────────────────────────────────
+            function setSaveStatus(message, type) {
+                saveStatus.textContent = message;
+                saveStatus.className = 'save-status ' + (type || '');
+            }
+
+            async function handleSaveToGitHub() {
+                if (!githubToken) {
+                    showTokenModal();
+                    return;
+                }
+                setSaveStatus('Saving…', 'loading');
+                saveToGitHubBtn.disabled = true;
+                try {
+                    // Re-fetch SHA to avoid conflicts
+                    await fetchPapersWithSha();
+                    await commitPapersToGitHub(papers);
+                    setSaveStatus('✓ Saved', 'success');
+                    showToast('Saved to GitHub! 🎉', 'success');
+                    setTimeout(() => setSaveStatus('', ''), 3000);
+                } catch (err) {
+                    console.error('Save error:', err);
+                    setSaveStatus('Save failed', 'error');
+                    showToast('Save failed: ' + err.message, 'error');
+                } finally {
+                    saveToGitHubBtn.disabled = false;
+                }
+            }
+
+            // ─────────────────────────────────────
+            // EVENT LISTENERS
+            // ─────────────────────────────────────
+            editToggleBtn.addEventListener('click', () => {
+                if (editMode) {
+                    exitEditMode();
+                } else {
+                    enterEditMode();
+                }
+            });
+
+            passwordSubmitBtn.addEventListener('click', handlePasswordSubmit);
+            passwordCancelBtn.addEventListener('click', hidePasswordModal);
+            passwordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handlePasswordSubmit();
+                if (e.key === 'Escape') hidePasswordModal();
+            });
+
+            tokenSubmitBtn.addEventListener('click', handleTokenSubmit);
+            tokenSkipBtn.addEventListener('click', handleTokenSkip);
+            tokenInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleTokenSubmit();
+                if (e.key === 'Escape') handleTokenSkip();
+            });
+
+            paperEditSaveBtn.addEventListener('click', handlePaperEditSave);
+            paperEditCancelBtn.addEventListener('click', hidePaperEditModal);
+            paperEditModalOverlay.addEventListener('click', (e) => {
+                if (e.target === paperEditModalOverlay) hidePaperEditModal();
+            });
+
+            passwordModalOverlay.addEventListener('click', (e) => {
+                if (e.target === passwordModalOverlay) hidePasswordModal();
+            });
+            tokenModalOverlay.addEventListener('click', (e) => {
+                if (e.target === tokenModalOverlay) hideTokenModal();
+            });
+
+            addPaperBtn.addEventListener('click', () => {
+                if (!editMode) return;
+                showPaperEditModal(null);
+            });
+
+            saveToGitHubBtn.addEventListener('click', handleSaveToGitHub);
+
+            // Delegate clicks for edit/delete buttons on paper cards
+            mainContainer.addEventListener('click', (e) => {
+                const editBtn = e.target.closest('.edit-paper-btn');
+                const deleteBtn = e.target.closest('.delete-paper-btn');
+                if (editBtn && editMode) {
+                    const index = parseInt(editBtn.getAttribute('data-index'));
+                    if (index >= 0 && index < papers.length) {
+                        showPaperEditModal(papers[index]);
+                    }
+                }
+                if (deleteBtn && editMode) {
+                    const index = parseInt(deleteBtn.getAttribute('data-index'));
+                    if (index >= 0 && index < papers.length) {
+                        handleDeletePaper(index);
+                    }
+                }
+            });
+
+            // Keyboard shortcut: Ctrl+E to toggle edit
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                    e.preventDefault();
+                    if (editMode) {
+                        exitEditMode();
+                    } else {
+                        enterEditMode();
+                    }
+                }
+            });
+
+            // ─────────────────────────────────────
+            // INIT
+            // ─────────────────────────────────────
+            function init() {
+                // Check for stored token
+                githubToken = getStoredToken();
+                // Check if edit session is still valid
+                if (isPasswordSessionValid()) {
+                    editMode = true;
+                    if (githubToken) {
+                        refreshPapersWithToken().then(() => renderAll());
+                    } else {
+                        renderAll();
+                        // Don't auto-show token modal; user can click save to trigger it
+                    }
+                }
+                // Always load public data
+                loadPapers();
+                // Initial render
+                renderAll();
+            }
+
+            init();
+
+            console.log('📖 Research Journal ready.');
+            console.log('   Configure CONFIG at the top of the script with your GitHub details.');
+            console.log('   Press Ctrl+E to toggle edit mode.');
+            console.log('   Generate password hash: crypto.subtle.digest("SHA-256", new TextEncoder().encode("yourpassword")).then(h => console.log([...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,"0")).join("")))');
+        })();
+    </script>
+</body>
+</html>
